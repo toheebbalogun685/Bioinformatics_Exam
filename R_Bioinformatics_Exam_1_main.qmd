@@ -1,0 +1,80 @@
+---
+title: "Q10_Bioinformatics_Exam"
+author: "Toheeb_Balogun; PID:A59018916"
+format: pdf
+editor: visual
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
+```
+
+```{r}
+# Load the packages
+library(ggplot2)
+library(lubridate)
+library(dplyr)
+```
+
+```{r}
+# read the csv file containing the most most recently dated COVID-19 Variant Data 
+# from the California Health and Human Services (CHHS) and store it in a data frame 
+# called covid_data. Also, print out the first six rows for exploratory analysis 
+#setwd = set working directory
+setwd("C:/Users/ITSloaner/Desktop/Bioinformatics_exam")
+covid_data = read.csv('covid19_variants.csv') 
+head(covid_data)
+```
+
+```{r}
+#Subset the covid dataframe by selecting only the required columns 
+#(date, variant_name and percentage) and store it in a new dataframe called covid_data_1
+covid_data_1 = covid_data[, c(1, 4, 6)]
+head(covid_data_1) # Print covid_data_1 which is the new dataframe 
+```
+
+```{r}
+#exclude other and total in the variant_name column and assign the
+#result to the same dataframe 
+covid_data_1 <- covid_data_1 %>% 
+  filter(variant_name != "Other" & variant_name != "Total") 
+head(covid_data_1)
+```
+
+
+```{r}
+#convert the date column in covid_data_1 to a date object using the ymd function 
+covid_data_1$date <- ymd(covid_data_1$date)
+#Print the first-six role of the modified dataframe
+head(covid_data_1)
+```
+
+```{r}
+# Filter the date column to only include Jan 2021 to April 2022
+# Convert the date column to a date object using as.Date function
+# Use the between function to check if the date is within the range
+covid_data_2 = covid_data_1
+covid_data_2 <- covid_data_2 %>%
+  filter(between(as.Date(date), as.Date("2021-01-01"), as.Date("2022-04-30")))
+head(covid_data_2)
+```
+
+```{r}
+# This code chunk plot the  percentage of sequenced specimen over time 
+#colored by variant_name. 
+ggplot(covid_data_2, aes(x = date, y = percentage, color = variant_name)) +
+  geom_line() +
+  # adjust x-axis labels and breaks
+  scale_x_date(date_labels = "%b. %Y", date_breaks = "1 month") + 
+  labs(x = "Data source: <https://data.chhs.ca.gov/>", 
+       y = "Percentage of sequenced specimen", 
+       title = "Covid-19 Variants in California", color=NULL) +
+  theme_minimal() +
+  # rotate and align x-axis labels
+  theme(axis.text.x = element_text(angle = 55, hjust = 1), 
+        axis.line = element_line(), # add axis lines
+        # add panel border
+        panel.border = element_rect(color = "black", fill = NA),
+        axis.ticks = element_line(),
+         axis.title.x = element_text(hjust = 0.8, vjust=-2))
+```
