@@ -1,0 +1,70 @@
+---
+title: "mutation-finder"
+author: "Toheeb-Balogun"
+format: html
+editor: visual
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
+```
+
+```{r}
+# Load Biostrings package
+library(Biostrings)
+
+setwd("C:/Users/ITSloaner/Desktop/Bioinformatics_exam")
+```
+
+
+```{r}
+# Read the sequence files (assuming they are in FASTA format)
+library(bio3d)
+seqs <- read.fasta("my_sequence.fa")
+#seqs
+```
+
+
+```{r}
+## Calculate positional identity scores
+ide <- conserv(seqs$ali, method="identity")
+mutant.sites <- which(ide < 1) 
+
+## Exclude gap positions from analysis
+gaps <- gap.inspect(seqs)
+mutant.sites <- mutant.sites[mutant.sites %in% gaps$f.inds]
+
+mutant.sites
+```
+
+
+```{r}
+## Make a "names" label for our output sequences (one per mutant)
+mutant.names <- paste0(seqs$ali["wt_healthy",mutant.sites],
+                       mutant.sites,
+                       seqs$ali["mutant_tumor",mutant.sites])
+
+mutant.names
+```
+
+```{r}
+## Sequence positions surounding each mutant site
+start.position <- mutant.sites - 8
+end.position <-  mutant.sites + 8
+
+# Blank matrix to store sub-sequences
+store.seqs <- matrix("-", nrow=length(mutant.sites), ncol=17)
+rownames(store.seqs) <- mutant.names
+
+## Extract each sub-sequence
+for(i in 1:length(mutant.sites)) {
+  store.seqs[i,] <- seqs$ali["mutant_tumor",start.position[i]:end.position[i]]
+}
+
+store.seqs
+```
+
+
+
+
