@@ -9,6 +9,7 @@ editor: visual
 knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
 ```
 
+# Analysis of COVID-19 Variant Data obtain from from the California Health and Human Services (CHHS) open data site
 ```{r}
 # Load the packages
 library(ggplot2)
@@ -16,6 +17,7 @@ library(lubridate)
 library(dplyr)
 ```
 
+## Import the data and perform exploratory data analysis 
 ```{r}
 # read the csv file containing the most most recently dated COVID-19 Variant Data 
 # from the California Health and Human Services (CHHS) and store it in a data frame 
@@ -26,6 +28,8 @@ covid_data = read.csv('covid19_variants.csv')
 head(covid_data)
 ```
 
+
+## Subset only columns of interest 
 ```{r}
 #Subset the covid dataframe by selecting only the required columns 
 #(date, variant_name and percentage) and store it in a new dataframe called covid_data_1
@@ -33,6 +37,8 @@ covid_data_1 = covid_data[, c(1, 4, 6)]
 head(covid_data_1) # Print covid_data_1 which is the new dataframe 
 ```
 
+
+## Exclude 'Total' and 'Other' column
 ```{r}
 #exclude other and total in the variant_name column and assign the
 #result to the same dataframe 
@@ -41,7 +47,7 @@ covid_data_1 <- covid_data_1 %>%
 head(covid_data_1)
 ```
 
-
+## Use of date format 
 ```{r}
 #convert the date column in covid_data_1 to a date object using the ymd function 
 covid_data_1$date <- ymd(covid_data_1$date)
@@ -49,6 +55,8 @@ covid_data_1$date <- ymd(covid_data_1$date)
 head(covid_data_1)
 ```
 
+
+## Dates filtering to include only the dates of interest 
 ```{r}
 # Filter the date column to only include Jan 2021 to April 2022
 # Convert the date column to a date object using as.Date function
@@ -59,6 +67,8 @@ covid_data_2 <- covid_data_2 %>%
 head(covid_data_2)
 ```
 
+
+## Graph plotting 
 ```{r}
 # This code chunk plot the  percentage of sequenced specimen over time 
 #colored by variant_name. 
